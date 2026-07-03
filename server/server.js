@@ -20,6 +20,21 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../public/pages/login.html"));
 });
 
+// Login Route
+app.post("/api/login", (req, res) => {
+
+    const { email, password } = req.body;
+
+    console.log("Email:", email);
+    console.log("Password:", password);
+
+    res.json({
+        success: true,
+        message: "Login request received successfully!"
+    });
+
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
