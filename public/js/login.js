@@ -1,6 +1,11 @@
 // Password Toggle
 const password = document.getElementById("password");
+
 const togglePassword = document.getElementById("togglePassword");
+
+const spinner = document.getElementById("spinner");
+
+const buttonText = document.getElementById("buttonText");
 
 togglePassword.addEventListener("click", () => {
 
@@ -9,6 +14,7 @@ togglePassword.addEventListener("click", () => {
         password.type = "text";
 
         togglePassword.classList.remove("fa-eye");
+
         togglePassword.classList.add("fa-eye-slash");
 
     } else {
@@ -16,6 +22,7 @@ togglePassword.addEventListener("click", () => {
         password.type = "password";
 
         togglePassword.classList.remove("fa-eye-slash");
+
         togglePassword.classList.add("fa-eye");
 
     }
@@ -25,8 +32,12 @@ togglePassword.addEventListener("click", () => {
 // Form Validation
 
 const loginForm = document.getElementById("loginForm");
+
 const email = document.getElementById("email");
+
 const loginButton = document.getElementById("loginButton");
+
+const message = document.getElementById("message");
 
 loginForm.addEventListener("submit", (event) => {
 
@@ -35,18 +46,25 @@ loginForm.addEventListener("submit", (event) => {
 
     // Remove extra spaces
     const emailValue = email.value.trim();
+
     const passwordValue = password.value.trim();
 
     // Validation
     if (emailValue === "" || passwordValue === "") {
 
-        alert("Please fill in all fields.");
+       message.className = "message error";
+
+       message.innerText = "Please fill in all fields.";
 
         return;
        
     }
-    loginButton.innerText = "Logging in...";
-loginButton.disabled = true;
+    buttonText.innerText = "Logging in...";
+
+    spinner.classList.add("spin");
+
+    loginButton.disabled = true;
+
 
 //The Fetch API Initialization
 fetch("/api/login", {
@@ -68,24 +86,48 @@ fetch("/api/login", {
     })
 
 })
-.then(response => response.json())
+.then(response => response.json())  
 
 .then(data => {
 
-    loginButton.innerText = "Login";
+    buttonText.innerText = "Login";
+
+    spinner.classList.remove("spin");
+
     loginButton.disabled = false;
 
-    alert(data.message);
+    if (data.success) {
+
+        // Save logged in user
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        // Redirect to dashboard
+        window.location.href = "/pages/dashboard.html";
+
+    } else {
+
+        message.className = "message error";
+
+        message.innerText = data.message;
+
+    }
 
 })
 .catch(error => {
 
     console.error(error);
 
-    loginButton.innerText = "Login";
+    buttonText.innerText = "Login";
+
+    spinner.classList.remove("spin");
+
     loginButton.disabled = false;
 
-    alert("Something went wrong.");
+   
+
+    message.className = "message error";
+
+    message.innerText = "Something went wrong.";
 
 });
 

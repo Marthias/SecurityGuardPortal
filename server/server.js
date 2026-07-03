@@ -1,9 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const db = require("../config/db");
+const bcrypt = require("bcrypt");
 require("dotenv").config();
 
-const db = require("../config/db");
 
 const app = express();
 
@@ -25,13 +26,153 @@ app.post("/api/login", (req, res) => {
 
     const { email, password } = req.body;
 
-    console.log("Email:", email);
-    console.log("Password:", password);
+    // 1. Check if user exists
+    const sql = "SELECT * FROM users WHERE email = ?";
 
-    res.json({
-        success: true,
-        message: "Login request received successfully!"
+    db.query(sql, [email], async (err, results) => {
+
+        if (err) {
+            return res.json({
+                success: false,
+                message: "Database error"
+            });
+        }
+
+        // 2. If user not found
+        if (results.length === 0) {
+            return res.json({
+                success: false,
+                message: "Invalid email or password"
+            });
+        }
+
+        const user = results[0];
+
+        // 3. Compare password with bcrypt
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.json({
+                success: false,
+                message: "Invalid email or password"
+            });
+        }
+
+        // 4. Success login
+        return res.json({
+            success: true,
+            message: "Login successful!",
+            user: {
+                id: user.id,
+                name: user.name,
+                role: user.role
+            }
+        });
+
     });
+
+});
+
+// Dashboard Statistics
+app.get("/api/dashboard/stats", (req, res) => {
+
+    const dashboardData = {};
+
+    // Total Guards
+    db.query(
+        "SELECT COUNT(*) AS totalGuards FROM guards",
+        (err, guardResult) => {
+
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Database Error"
+                });
+            }
+
+            dashboardData.totalGuards =
+                guardResult[0].totalGuards;
+
+            // Active Guards
+            db.query(
+                "SELECT COUNT(*) AS activeGuards FROM guards WHERE status='Active'",
+                (err, activeResult) => {
+
+                    if (err) {
+                        return res.status(500).json({
+                            success: false,
+                            message: "Database Error"
+                        });
+                    }
+
+                    dashboardData.activeGuards =
+                        activeResult[0].activeGuards;
+
+                    // Incidents
+                    db.query(
+                        "SELECT COUNT(*) AS totalIncidents FROM incidents",
+                        (err, incidentResult) => {
+
+                            if (err) {
+                                return res.status(500).json({
+                                    success: false,
+                                    message: "Database Error"
+                                });
+                            }
+
+                            dashboardData.totalIncidents =
+                                incidentResult[0].totalIncidents;
+
+                            res.json({
+                                success: true,
+                                stats: dashboardData
+                            });
+
+                        });
+
+                });
+
+        });
+
+});
+
+// Add Guard
+app.post("/api/guards", (req, res) => {
+
+    const {
+        fullName,
+        phone,
+        email,
+        address,
+        status
+    } = req.body;
+
+    const sql = `
+        INSERT INTO guards
+        (full_name, phone, email, address, status)
+        VALUES (?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+        sql,
+        [fullName, phone, email, address, status],
+        (err, result) => {
+
+            if (err) {
+
+                return res.json({
+                    success:false,
+                    message:"Failed to add guard."
+                });
+
+            }
+
+            res.json({
+                success:true,
+                message:"Guard added successfully!"
+            });
+
+        });
 
 });
 

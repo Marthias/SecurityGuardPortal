@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Security Portal</h2>
+
+        <ul>
+            <li onclick="location.href='dashboard.html'"> Dashboard</li>
+
+           <li onclick="location.href='guards.html'">Guards</li>
+
+            <li>Incidents</li>
+            
+            <li id="logout">Logout</li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+
+        <h1 id="welcome">Welcome Admin</h1>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Total Guards</h3>
+                <p id="guardsCount">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Active Guards</h3>
+                <p id="activeCount">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Incidents</h3>
+                <p id="incidentCount">0</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="../js/dashboard.js"></script>
+
+</body>
+</html>
