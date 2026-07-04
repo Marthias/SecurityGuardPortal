@@ -176,6 +176,31 @@ app.post("/api/guards", (req, res) => {
 
 });
 
+// Get All Guards
+app.get("/api/guards", (req, res) => {
+
+    db.query(
+        "SELECT * FROM guards ORDER BY id ASC",
+        (err, results) => {
+
+            if (err) {
+
+                return res.json({
+                    success: false,
+                    message: "Database error"
+                });
+
+            }
+
+            res.json({
+                success: true,
+                guards: results
+            });
+
+        });
+
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });

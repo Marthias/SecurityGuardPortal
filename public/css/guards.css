@@ -75,3 +75,115 @@ th{
     margin-top:15px;
     font-weight:bold;
 }
+
+/* ---------- STATUS BADGES ---------- */
+
+.Active{
+
+    background:#d1fae5;
+
+    color:#065f46;
+
+    padding:6px 12px;
+
+    border-radius:20px;
+
+    font-weight:bold;
+
+}
+
+.Inactive{
+
+    background:#fee2e2;
+
+    color:#991b1b;
+
+    padding:6px 12px;
+
+    border-radius:20px;
+
+    font-weight:bold;
+
+}
+
+
+/* ---------- BUTTONS ---------- */
+
+.editBtn{
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    padding:8px 14px;
+
+    border-radius:6px;
+
+    cursor:pointer;
+
+    margin-right:5px;
+
+}
+
+.deleteBtn{
+
+    background:#dc2626;
+
+    color:white;
+
+    border:none;
+
+    padding:8px 14px;
+
+    border-radius:6px;
+
+    cursor:pointer;
+
+}
+
+
+/* Hover */
+
+.editBtn:hover{
+
+    opacity:.85;
+
+}
+
+.deleteBtn:hover{
+
+    opacity:.85;
+
+}
+
+
+/* ---------- TABLE ---------- */
+
+tbody tr:hover{
+
+    background:#f3f4f6;
+
+}
+
+
+/* ---------- FORM ---------- */
+
+input:focus,
+select:focus{
+
+    outline:none;
+
+    border:2px solid #2563eb;
+
+}
+
+
+/* ---------- PAGE TITLE ---------- */
+
+h1{
+
+    color:#111827;
+
+}
