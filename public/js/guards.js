@@ -1,5 +1,6 @@
 // Check if user is logged in
 const user = JSON.parse(localStorage.getItem("user"));
+let editingGuardId = null;
 
 if (!user) {
     window.location.href = "/login.html";
@@ -30,27 +31,29 @@ guardForm.addEventListener("submit", (event) => {
 
     const status = document.getElementById("status").value;
 
-    fetch("/api/guards", {
+const url = editingGuardId
+    ? `/api/guards/${editingGuardId}`
+    : "/api/guards";
 
-        method: "POST",
+const method = editingGuardId ? "PUT" : "POST";
 
-        headers: {
+fetch(url, {
 
-            "Content-Type": "application/json"
+    method,
 
-        },
+    headers: {
+        "Content-Type": "application/json"
+    },
 
-        body: JSON.stringify({
-
-            fullName,
-            phone,
-            email,
-            address,
-            status
-
-        })
-
+    body: JSON.stringify({
+        fullName,
+        phone,
+        email,
+        address,
+        status
     })
+
+})
 
     .then(response => response.json())
 
@@ -63,6 +66,10 @@ guardForm.addEventListener("submit", (event) => {
             message.innerText = data.message;
 
             guardForm.reset();
+
+            editingGuardId = null;
+
+            document.querySelector("button[type='submit']").innerText = "Add Guard";
 
             loadGuards();
 
@@ -96,41 +103,50 @@ function loadGuards() {
 
         tbody.innerHTML = "";
 
-       data.guards.forEach((guard, index) => {
+        data.guards.forEach((guard, index) => {
 
-    tbody.innerHTML += `
-        <tr>
+            tbody.innerHTML += `
+                <tr>
 
-            <td>${index + 1}</td>
+                    <td>${index + 1}</td>
 
-            <td>${guard.full_name}</td>
+                    <td>${guard.full_name}</td>
 
-            <td>${guard.phone}</td>
+                    <td>${guard.phone}</td>
 
-            <td>
-                <span class="${guard.status}">
-                    ${guard.status}
-                </span>
-            </td>
+                    <td>
+                        <span class="${guard.status}">
+                            ${guard.status}
+                        </span>
+                    </td>
 
-            <td>
+                    <td>
 
-                <button class="editBtn"
-                    data-id="${guard.id}">
-                     Edit
-                </button>
+                        <button class="editBtn"
+                            onclick="editGuard(${guard.id},
+                            '${guard.full_name}',
+                            '${guard.phone}',
+                            '${guard.email}',
+                            '${guard.address}',
+                            '${guard.status}')">
 
-                <button class="deleteBtn"
-                    data-id="${guard.id}">
-                    Delete
-                </button>
+                            Edit
 
-            </td>
+                        </button>
 
-        </tr>
-    `;
+                        <button class="deleteBtn"
+                            onclick="deleteGuard(${guard.id})">
 
-});
+                            Delete
+
+                        </button>
+
+                    </td>
+
+                </tr>
+            `;
+
+        });
 
     });
 
@@ -138,3 +154,60 @@ function loadGuards() {
 
 // Load immediately when page opens
 loadGuards();
+
+function editGuard(id, fullName, phone, email, address, status){
+
+    editingGuardId = id;
+
+    document.getElementById("fullName").value = fullName;
+
+    document.getElementById("phone").value = phone;
+
+    document.getElementById("email").value = email;
+
+    document.getElementById("address").value = address;
+
+    document.getElementById("status").value = status;
+
+    document.querySelector("button[type='submit']").innerText = "Update Guard";
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+function deleteGuard(id){
+
+    const confirmed = confirm("Are you sure you want to delete this guard?");
+
+    if(!confirmed){
+        return;
+    }
+
+    fetch(`/api/guards/${id}`,{
+
+        method:"DELETE"
+
+    })
+
+    .then(response=>response.json())
+
+    .then(data=>{
+
+        message.style.color="green";
+
+        message.innerText=data.message;
+
+        loadGuards();
+
+    })
+
+    .catch(error=>{
+
+        console.error(error);
+
+    });
+
+}

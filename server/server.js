@@ -201,6 +201,89 @@ app.get("/api/guards", (req, res) => {
 
 });
 
+// Update Guard
+app.put("/api/guards/:id", (req, res) => {
+
+    const { id } = req.params;
+
+    const {
+        fullName,
+        phone,
+        email,
+        address,
+        status
+    } = req.body;
+
+    const sql = `
+        UPDATE guards
+        SET
+            full_name=?,
+            phone=?,
+            email=?,
+            address=?,
+            status=?
+        WHERE id=?
+    `;
+
+    db.query(
+        sql,
+        [
+            fullName,
+            phone,
+            email,
+            address,
+            status,
+            id
+        ],
+        (err) => {
+
+            if (err) {
+
+                return res.json({
+                    success: false,
+                    message: "Update failed."
+                });
+
+            }
+
+            res.json({
+                success: true,
+                message: "Guard updated successfully!"
+            });
+
+        });
+
+});
+
+// Delete Guard
+app.delete("/api/guards/:id", (req, res) => {
+
+    const { id } = req.params;
+
+    db.query(
+        "DELETE FROM guards WHERE id = ?",
+        [id],
+        (err) => {
+
+            if (err) {
+
+                return res.json({
+                    success:false,
+                    message:"Delete failed."
+                });
+
+            }
+
+            res.json({
+                success:true,
+                message:"Guard deleted successfully!"
+            });
+
+        }
+    );
+
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
