@@ -96,15 +96,21 @@ fetch("/api/login", {
 
     loginButton.disabled = false;
 
-    if (data.success) {
+    if(data.success){
 
-        // Save logged in user
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("loggedIn", "true");
 
-        // Redirect to dashboard
-        window.location.href = "/pages/dashboard.html";
+        message.className = "message success";
 
-    } else {
+        message.innerText = data.message;
+
+        setTimeout(() => {
+
+            window.location.href = "pages/dashboard.html";
+
+        }, 1000);
+
+    }else{
 
         message.className = "message error";
 
@@ -122,8 +128,6 @@ fetch("/api/login", {
     spinner.classList.remove("spin");
 
     loginButton.disabled = false;
-
-   
 
     message.className = "message error";
 

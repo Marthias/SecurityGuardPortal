@@ -93,42 +93,68 @@ app.get("/api/dashboard/stats", (req, res) => {
             dashboardData.totalGuards =
                 guardResult[0].totalGuards;
 
-            // Active Guards
-            db.query(
-                "SELECT COUNT(*) AS activeGuards FROM guards WHERE status='Active'",
-                (err, activeResult) => {
+           // Active Guards
+db.query(
+    "SELECT COUNT(*) AS activeGuards FROM guards WHERE status='Active'",
+    (err, activeResult) => {
 
-                    if (err) {
-                        return res.status(500).json({
-                            success: false,
-                            message: "Database Error"
-                        });
-                    }
+        if (err) {
 
-                    dashboardData.activeGuards =
-                        activeResult[0].activeGuards;
+            return res.status(500).json({
+                success: false,
+                message: "Database Error"
+            });
 
-                    // Incidents
-                    db.query(
-                        "SELECT COUNT(*) AS totalIncidents FROM incidents",
-                        (err, incidentResult) => {
+        }
 
-                            if (err) {
-                                return res.status(500).json({
-                                    success: false,
-                                    message: "Database Error"
-                                });
-                            }
+       dashboardData.activeGuards = activeResult[0].activeGuards;
+        
+                    
 
-                            dashboardData.totalIncidents =
-                                incidentResult[0].totalIncidents;
+    // Inactive Guards
+db.query(
+    "SELECT COUNT(*) AS inactiveGuards FROM guards WHERE status='Inactive'",
+    (err, inactiveResult) => {
 
-                            res.json({
-                                success: true,
-                                stats: dashboardData
-                            });
+        if (err) {
 
-                        });
+            return res.status(500).json({
+                success:false,
+                message:"Database Error"
+            });
+
+        }
+
+        dashboardData.inactiveGuards =
+            inactiveResult[0].inactiveGuards;
+
+            
+
+        // Incidents
+        db.query(
+            "SELECT COUNT(*) AS totalIncidents FROM incidents",
+            (err, incidentResult) => {
+
+                if (err) {
+
+                    return res.status(500).json({
+                        success:false,
+                        message:"Database Error"
+                    });
+
+                }
+
+                dashboardData.totalIncidents =
+                    incidentResult[0].totalIncidents;
+
+                res.json({
+                    success:true,
+                    stats:dashboardData
+                });
+
+            });
+
+    });
 
                 });
 

@@ -1,13 +1,15 @@
-// Get logged in user from localStorage
-const user = JSON.parse(localStorage.getItem("user"));
+if(localStorage.getItem("loggedIn") !== "true"){
 
-if (!user) {
-    // If no login session → go back to login
-    window.location.href = "/login.html";
+   window.location.href = "/Pages/login.html";
+
+
 }
 
+
 // Show welcome message
-document.getElementById("welcome").innerText = `Welcome ${user.name}`;
+
+document.getElementById("welcome").innerText =
+"Welcome Administrator";
 
 fetch("/api/dashboard/stats")
     .then(response => response.json())
@@ -22,6 +24,9 @@ fetch("/api/dashboard/stats")
         document.getElementById("incidentCount").innerText =
             data.stats.totalIncidents;
 
+        document.getElementById("inactiveCount").innerText =
+            data.stats.inactiveGuards;
+
     })
     .catch(error => {
 
@@ -29,8 +34,33 @@ fetch("/api/dashboard/stats")
 
     });
 
+
+function updateClock() {
+
+    const now = new Date();
+
+    document.getElementById("clock").innerText =
+        now.toLocaleString();
+
+}
+
+updateClock();
+setInterval(updateClock,1000);
+
 // Logout
-document.getElementById("logout").addEventListener("click", () => {
-    localStorage.removeItem("user");
-    window.location.href = "/login.html";
+
+const logoutBtn = document.getElementById("logoutBtn");
+
+logoutBtn.addEventListener("click", () => {
+
+    const confirmLogout = confirm("Are you sure you want to logout?");
+
+    if(!confirmLogout){
+        return;
+    }
+
+    localStorage.removeItem("loggedIn");
+
+    window.location.href = "/pages/login.html";
+
 });
