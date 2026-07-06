@@ -310,6 +310,153 @@ app.delete("/api/guards/:id", (req, res) => {
 
 });
 
+// Add Incident
+app.post("/api/incidents", (req, res) => {
+
+    const {
+        title,
+        description,
+        location,
+        incidentDate,
+        status
+    } = req.body;
+
+    const sql = `
+        INSERT INTO incidents
+        (title, description, location, incident_date, status)
+        VALUES (?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+        sql,
+        [title, description, location, incidentDate, status],
+        (err) => {
+
+            if (err) {
+
+                return res.json({
+                    success: false,
+                    message: "Failed to add incident."
+                });
+
+            }
+
+            res.json({
+                success: true,
+                message: "Incident added successfully!"
+            });
+
+        });
+
+});
+
+// Get All Incidents
+app.get("/api/incidents", (req, res) => {
+
+    db.query(
+        "SELECT * FROM incidents ORDER BY id ASC",
+        (err, results) => {
+
+            if (err) {
+
+                return res.json({
+                    success: false,
+                    message: "Database error"
+                });
+
+            }
+
+            res.json({
+                success: true,
+                incidents: results
+            });
+
+        });
+
+});
+
+// Update Incident
+app.put("/api/incidents/:id", (req, res) => {
+
+    const { id } = req.params;
+
+    const {
+        title,
+        description,
+        location,
+        incidentDate,
+        status
+    } = req.body;
+
+    const sql = `
+        UPDATE incidents
+        SET
+            title = ?,
+            description = ?,
+            location = ?,
+            incident_date = ?,
+            status = ?
+        WHERE id = ?
+    `;
+
+    db.query(
+        sql,
+        [
+            title,
+            description,
+            location,
+            incidentDate,
+            status,
+            id
+        ],
+        (err) => {
+
+            if (err) {
+
+                return res.json({
+                    success: false,
+                    message: "Update failed."
+                });
+
+            }
+
+            res.json({
+                success: true,
+                message: "Incident updated successfully!"
+            });
+
+        });
+
+});
+
+// Delete Incident
+app.delete("/api/incidents/:id", (req, res) => {
+
+    const { id } = req.params;
+
+    db.query(
+        "DELETE FROM incidents WHERE id = ?",
+        [id],
+        (err) => {
+
+            if (err) {
+
+                return res.json({
+                    success: false,
+                    message: "Delete failed."
+                });
+
+            }
+
+            res.json({
+                success: true,
+                message: "Incident deleted successfully!"
+            });
+
+        });
+
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });

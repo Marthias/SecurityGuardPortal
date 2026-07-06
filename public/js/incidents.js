@@ -1,60 +1,54 @@
-// Check if user is logged in
-const user = JSON.parse(localStorage.getItem("user"));
-const searchGuard = document.getElementById("searchGuard");
-let editingGuardId = null;
+// Authentication
+if (localStorage.getItem("loggedIn") !== "true") {
 
-if (!user) {
-    window.location.href = "/login.html";
+    window.location.href = "/Pages/login.html";
+
 }
 
-// Logout
-document.getElementById("logout").addEventListener("click", () => {
-    localStorage.removeItem("user");
-    window.location.href = "/login.html";
-});
-
-// Form
-const guardForm = document.getElementById("guardForm");
-
+const incidentForm = document.getElementById("incidentForm");
 const message = document.getElementById("message");
+const searchIncident = document.getElementById("searchIncident");
+const toast = document.getElementById("toast");
 
-guardForm.addEventListener("submit", (event) => {
+let editingIncidentId = null;
+
+incidentForm.addEventListener("submit", (event) => {
 
     event.preventDefault();
 
-    const fullName = document.getElementById("fullName").value.trim();
-
-    const phone = document.getElementById("phone").value.trim();
-
-    const email = document.getElementById("email").value.trim();
-
-    const address = document.getElementById("address").value.trim();
-
+    const title = document.getElementById("title").value.trim();
+    const description = document.getElementById("description").value.trim();
+    const location = document.getElementById("location").value.trim();
+    const incidentDate = document.getElementById("incidentDate").value;
     const status = document.getElementById("status").value;
 
-const url = editingGuardId
-    ? `/api/guards/${editingGuardId}`
-    : "/api/guards";
+    const url = editingIncidentId
+        ? `/api/incidents/${editingIncidentId}`
+        : "/api/incidents";
 
-const method = editingGuardId ? "PUT" : "POST";
+    const method = editingIncidentId ? "PUT" : "POST";
 
-fetch(url, {
+    fetch(url, {
 
-    method,
+        method,
 
-    headers: {
-        "Content-Type": "application/json"
-    },
+        headers: {
 
-    body: JSON.stringify({
-        fullName,
-        phone,
-        email,
-        address,
-        status
+            "Content-Type": "application/json"
+
+        },
+
+        body: JSON.stringify({
+
+            title,
+            description,
+            location,
+            incidentDate,
+            status
+
+        })
+
     })
-
-})
 
     .then(response => response.json())
 
@@ -63,22 +57,24 @@ fetch(url, {
         if (data.success) {
 
             message.style.color = "green";
-
             message.innerText = data.message;
 
-            guardForm.reset();
+            showToast(data.message);
 
-            editingGuardId = null;
+            incidentForm.reset();
 
-            document.querySelector("button[type='submit']").innerText = "Add Guard";
+            editingIncidentId = null;
 
-            loadGuards();
+            document.querySelector("button[type='submit']").innerText = "Add Incident";
+
+            loadIncidents();
 
         } else {
 
             message.style.color = "red";
-
             message.innerText = data.message;
+
+            showToast(data.message, false);
 
         }
 
@@ -92,112 +88,147 @@ fetch(url, {
 
 });
 
-function loadGuards() {
+function loadIncidents() {
 
-    fetch("/api/guards")
+    fetch("/api/incidents")
 
     .then(response => response.json())
 
     .then(data => {
 
-        const tbody = document.querySelector("#guardTable tbody");
+        const tbody = document.querySelector("#incidentTable tbody");
 
         tbody.innerHTML = "";
 
-        const keyword = searchGuard.value.toLowerCase();
+        const keyword = searchIncident.value.toLowerCase();
 
-const filteredGuards = data.guards.filter((guard) => {
+        const filteredIncidents = data.incidents.filter((incident) => {
 
-    return guard.full_name
-        .toLowerCase()
-        .includes(keyword);
+            return incident.title
+                .toLowerCase()
+                .includes(keyword);
 
-});
+        });
 
-filteredGuards.forEach((guard, index) => {
+        let html = "";
 
-            tbody.innerHTML += `
-                <tr>
+        filteredIncidents.forEach((incident, index) => {
 
-                    <td>${index + 1}</td>
+            html += `
 
-                    <td>${guard.full_name}</td>
+            <tr>
 
-                    <td>${guard.phone}</td>
+                <td>${index + 1}</td>
 
-                    <td>
-                        <span class="${guard.status}">
-                            ${guard.status}
-                        </span>
-                    </td>
+                <td>${incident.title}</td>
 
-                    <td>
+                <td>${incident.location}</td>
 
-                        <button class="editBtn"
-                            onclick="editGuard(${guard.id},
-                            '${guard.full_name}',
-                            '${guard.phone}',
-                            '${guard.email}',
-                            '${guard.address}',
-                            '${guard.status}')">
+                <td>${incident.incident_date}</td>
 
-                            Edit
+                <td>
 
-                        </button>
+                    <span class="${incident.status}">
+                        ${incident.status}
+                    </span>
 
-                        <button class="deleteBtn"
-                            onclick="deleteGuard(${guard.id})">
+                </td>
 
-                            Delete
+                <td>
 
-                        </button>
+                    <button class="editBtn"
 
-                    </td>
+                        onclick="editIncident(
 
-                </tr>
+                        ${incident.id},
+
+                        '${incident.title}',
+
+                        '${incident.description}',
+
+                        '${incident.location}',
+
+                        '${incident.incident_date}',
+
+                        '${incident.status}')">
+
+                        Edit
+
+                    </button>
+
+                    <button class="deleteBtn"
+
+                        onclick="deleteIncident(${incident.id})">
+
+                        Delete
+
+                    </button>
+
+                </td>
+
+            </tr>
+
             `;
 
         });
 
+        tbody.innerHTML = html;
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
     });
 
 }
 
-// Load immediately when page opens
-loadGuards();
+loadIncidents();
 
-function editGuard(id, fullName, phone, email, address, status){
+function editIncident(
+    id,
+    title,
+    description,
+    location,
+    incidentDate,
+    status
+){
 
-    editingGuardId = id;
+    editingIncidentId = id;
 
-    document.getElementById("fullName").value = fullName;
+    document.getElementById("title").value = title;
 
-    document.getElementById("phone").value = phone;
+    document.getElementById("description").value = description;
 
-    document.getElementById("email").value = email;
+    document.getElementById("location").value = location;
 
-    document.getElementById("address").value = address;
+    document.getElementById("incidentDate").value = incidentDate;
 
     document.getElementById("status").value = status;
 
-    document.querySelector("button[type='submit']").innerText = "Update Guard";
+    document.querySelector("button[type='submit']").innerText =
+    "Update Incident";
 
     window.scrollTo({
+
         top:0,
+
         behavior:"smooth"
+
     });
 
 }
 
-function deleteGuard(id){
+function deleteIncident(id){
 
-    const confirmed = confirm("Are you sure you want to delete this guard?");
+    if(!confirm("Delete this incident?")){
 
-    if(!confirmed){
         return;
+
     }
 
-    fetch(`/api/guards/${id}`,{
+    fetch(`/api/incidents/${id}`,{
 
         method:"DELETE"
 
@@ -211,7 +242,9 @@ function deleteGuard(id){
 
         message.innerText=data.message;
 
-        loadGuards();
+        showToast(data.message);
+
+        loadIncidents();
 
     })
 
@@ -219,12 +252,60 @@ function deleteGuard(id){
 
         console.error(error);
 
+        showToast("Delete failed!",false);
+
     });
 
 }
 
-searchGuard.addEventListener("keyup", () => {
+searchIncident.addEventListener("keyup", () => {
 
-    loadGuards();
+    loadIncidents();
 
 });
+
+function showToast(message, success=true){
+
+    toast.innerText=message;
+
+    toast.className="";
+
+    if(success){
+
+        toast.classList.add("show");
+
+    }else{
+
+        toast.classList.add("show","error");
+
+    }
+
+    setTimeout(()=>{
+
+        toast.classList.remove("show");
+
+    },3000);
+
+}
+
+// Logout
+const logoutBtn = document.getElementById("logoutBtn");
+
+logoutBtn.addEventListener("click", () => {
+
+    const confirmLogout = confirm("Are you sure you want to logout?");
+
+    if (!confirmLogout) {
+        return;
+    }
+
+    localStorage.removeItem("loggedIn");
+
+    window.location.href = "/Pages/login.html";
+
+});
+
+
+
+
+

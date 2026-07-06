@@ -229,7 +229,7 @@ function editGuard(id, fullName, phone, email, address, status) {
 
 }
 
-loadGuards();
+
 
 // ===============================
 // Delete Guard

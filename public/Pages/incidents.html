@@ -2,9 +2,15 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Incident Management</title>
+
     <link rel="stylesheet" href="../css/incidents.css">
+
 </head>
 
 <body>
@@ -12,60 +18,74 @@
 <div class="container">
 
     <!-- Sidebar -->
+
     <div class="sidebar">
 
         <h2>Security Portal</h2>
 
         <ul>
-            <li onclick="location.href='dashboard.html'">Dashboard</li>
-            <li>Guards</li>
-            <li>Incidents</li>
-            <li id="logout">Logout</li>
+
+            <li onclick="location.href='dashboard.html'">
+                Dashboard
+            </li>
+
+            <li onclick="location.href='guards.html'">
+                Guards
+            </li>
+
+            <li>
+                Incidents
+            </li>
+
+            <li id="logoutBtn">
+                Logout
+            </li>
+
         </ul>
 
     </div>
 
-    <!-- Main -->
+    <!-- Main Content -->
 
     <div class="main">
 
-        <h1>Guard Management</h1>
+        <h1>Incident Management</h1>
 
-        <form id="guardForm">
+        <form id="incidentForm">
 
             <input
                 type="text"
-                id="fullName"
-                placeholder="Full Name"
+                id="title"
+                placeholder="Incident Title"
+                required>
+
+            <textarea
+                id="description"
+                placeholder="Description"
+                rows="4"></textarea>
+
+            <input
+                type="text"
+                id="location"
+                placeholder="Location"
                 required>
 
             <input
-                type="text"
-                id="phone"
-                placeholder="Phone Number"
+                type="date"
+                id="incidentDate"
                 required>
-
-            <input
-                type="email"
-                id="email"
-                placeholder="Email">
-
-            <input
-                type="text"
-                id="address"
-                placeholder="Address">
 
             <select id="status">
 
-                <option>Active</option>
+                <option>Open</option>
 
-                <option>Inactive</option>
+                <option>Resolved</option>
 
             </select>
 
             <button type="submit">
 
-                Add Guard
+                Add Incident
 
             </button>
 
@@ -75,17 +95,19 @@
 
         <hr>
 
-        <hr>
+        <h2>Existing Incidents</h2>
 
-<h2>Incident Reports</h2>
+        <input
 
-<input
-    type="text"
-    id="searchGuard"
-    placeholder="Search guard by name..."
->
+            type="text"
 
-        <table id="guardTable">
+            id="searchIncident"
+
+            placeholder="Search incident by title..."
+
+        >
+
+        <table id="incidentTable">
 
             <thead>
 
@@ -93,9 +115,11 @@
 
                     <th>ID</th>
 
-                    <th>Name</th>
+                    <th>Title</th>
 
-                    <th>Phone</th>
+                    <th>Location</th>
+
+                    <th>Date</th>
 
                     <th>Status</th>
 
@@ -115,7 +139,9 @@
 
 </div>
 
-<script src="../js/guards.js"></script>
+<div id="toast"></div>
+
+<script src="../js/incidents.js"></script>
 
 </body>
 
