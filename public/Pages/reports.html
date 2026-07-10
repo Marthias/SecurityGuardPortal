@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Guard Management</title>
+    <link rel="stylesheet" href="../css/reports.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <h2>Security Portal</h2>
+
+        <ul>
+            <li onclick="location.href='dashboard.html'">Dashboard</li>
+            
+             <li onclick="location.href='guards.html'">Guards</li>
+
+            <li onclick="location.href='incidents.html'">Incidents</li>
+
+            <li onclick="location.href='reports.html'">Reports</li>
+
+            <li id="logoutBtn"><i class="fas fa-sign-out-alt"></i>Logout</li>
+        </ul>
+
+    </div>
+
+    <!-- Main -->
+<h1 class="page-title">Reports Dashboard</h1>
+
+
+
+<div class="reportCards">
+
+    <div class="reportCard">
+
+        <div class="icon"></div>
+
+        <h3>Total Guards</h3>
+
+        <h1 id="reportGuards">0</h1>
+
+    </div>
+
+    <div class="reportCard">
+
+        <div class="icon"></div>
+
+        <h3>Total Incidents</h3>
+
+        <h1 id="reportIncidents">0</h1>
+
+    </div>
+
+    <div class="reportCard">
+
+        <div class="icon"></div>
+
+        <h3>Active Guards</h3>
+
+        <h1 id="reportActive">0</h1>
+
+    </div>
+
+    <div class="reportCard">
+
+        <div class="icon"></div>
+
+        <h3>Inactive Guards</h3>
+
+        <h1 id="reportInactive">0</h1>
+
+    </div>
+
+</div>
+
+<div class="exportSection">
+
+    <h2>Export Reports</h2>
+
+    <p>
+        Download your reports in CSV format.
+    </p>
+
+    <div class="buttonGroup">
+
+        <button id="exportGuards">
+
+            Export Guards Report
+
+        </button>
+
+        <button id="exportIncidents">
+
+            Export Incidents Report
+
+        </button>
+
+    </div>
+
+</div>
+
+<script src="../js/reports.js"></script>
+
+<div id="toast"></div>
+
+</body>
+
+</html>

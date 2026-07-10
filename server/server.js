@@ -457,6 +457,82 @@ app.delete("/api/incidents/:id", (req, res) => {
 
 });
 
+// Export Guards Report (CSV)
+app.get("/api/reports/guards", (req, res) => {
+
+    db.query(
+        "SELECT * FROM guards ORDER BY id ASC",
+        (err, results) => {
+
+            if (err) {
+
+                return res.status(500).send("Database Error");
+
+            }
+
+            let csv =
+                "ID,Full Name,Phone,Email,Address,Status\n";
+
+            results.forEach((guard) => {
+
+                csv += `${guard.id},"${guard.full_name}","${guard.phone}","${guard.email}","${guard.address}","${guard.status}"\n`;
+
+            });
+
+            res.setHeader(
+                "Content-Type",
+                "text/csv"
+            );
+
+            res.setHeader(
+                "Content-Disposition",
+                "attachment; filename=guards_report.csv"
+            );
+
+            res.send(csv);
+
+        });
+
+});
+
+// Export Incidents Report (CSV)
+app.get("/api/reports/incidents", (req, res) => {
+
+    db.query(
+        "SELECT * FROM incidents ORDER BY id ASC",
+        (err, results) => {
+
+            if (err) {
+
+                return res.status(500).send("Database Error");
+
+            }
+
+            let csv =
+                "ID,Title,Description,Location,Incident Date,Status\n";
+
+            results.forEach((incident) => {
+
+                csv += `${incident.id},"${incident.title}","${incident.description}","${incident.location}","${incident.incident_date}","${incident.status}"\n`;
+
+            });
+
+            res.setHeader(
+                "Content-Type",
+                "text/csv"
+            );
+
+            res.setHeader(
+                "Content-Disposition",
+                "attachment; filename=incidents_report.csv"
+            );
+
+            res.send(csv);
+
+        });
+
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
